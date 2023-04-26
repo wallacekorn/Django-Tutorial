@@ -2,7 +2,6 @@
 *.pyc
 *~
 __pycache__
-__pycache__/
 
 # Env
 .env
@@ -31,4 +30,5 @@ $RECYCLE.BIN/
 .vscode/
 .history/
 *.code-workspace
+monday/monday/__pycache__/urls.cpython-311.pyc
 *.pyc
