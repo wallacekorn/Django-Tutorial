@@ -4,17 +4,55 @@
     <article class="post">
         <aside class="actions">
             {% if user.is_authenticated %}
-                <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">
-                    {% include './icons/pencil-fill.svg' %}
-                </a>
+                {% if post.published_date %}
+                {% else %}
+                    <a class="btn btn-secondary" href="{% url 'post_publish' pk=post.pk %}">Publish</a>
+                {% endif %}
+                <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">Edit Post</a>
+                <a class="btn btn-secondary" href="{% url 'post_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove">Remove Post</span></a>
+                <a class="btn btn-secondary" href="{% url 'add_comment_to_post' pk=post.pk %}">Add comment</a>
+                {% if post.published_date %}
+                    <br><br><div class="date">Published: {{ post.published_date }}</div>
+                {% endif %}
             {% endif %}
-        </aside>
-        {% if post.published_date %}
-            <time class="date">
-                {{ post.published_date }}
-            </time>
-        {% endif %}
+        </aside><br><br><br><br>
         <h2>{{ post.title }}</h2>
         <p>{{ post.text|linebreaksbr }}</p>
+    </article>
+
+    <hr>
+
+    <article>
+
+
+        {% if user.is_authenticated %}
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="date">{{ comment.created_date }}</div>  
+                    <strong>{{ comment.author }}</strong>
+                    <p>{{ comment.text|linebreaks }}</p>
+                </div>
+                <div class="comment">
+                    {% if not comment.approved_comment %}
+                        <a class="btn btn-secondary" href="{% url 'comment_approve' pk=comment.pk %}"><span class="glyphicon glyphicon-ok">Approve</span></a>
+                    {% endif %}
+                        <a class="btn btn-secondary" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove">Remove</span></a>
+                </div>
+            {% empty %}
+                <p>No comments here yet :(</p>
+            {% endfor %}
+        {% else %}
+            {% for comment in comments %}
+                {% if comment.approved_comment %}
+                    <div class="comment">
+                        <div class="date">{{ comment.created_date }}</div>  
+                        <strong>{{ comment.author }}</strong>
+                        <p>{{ comment.text|linebreaks }}</p>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>No comments here yet :(</p>
+            {% endfor %}
+        {% endif %}
     </article>
 {% endblock %}
